@@ -1,0 +1,24 @@
+{
+  "productName": "Venom PDF",
+  "version": "0.1.0",
+  "identifier": "com.venompdf.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Venom PDF",
+        "width": 1200,
+        "height": 800,
+        "theme": "Dark"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

@@ -1,0 +1,193 @@
+# ============================================================
+# Venom PDF — Agent Configuration
+# ============================================================
+# This file defines AI agent roles and workflows for the
+# Venom PDF project. Each agent has a focused responsibility.
+# ============================================================
+
+project:
+  name: "Venom PDF"
+  repo: "venom-pdf"
+  description: "Smart PDF Dark Mode Converter — Blazing Fast, Fully Offline"
+  stack:
+    runtime: "Tauri 2.0"
+    backend: "Rust"
+    frontend: "React + TypeScript + Tailwind CSS"
+    pdf_engine: "lopdf + pdf_oxide"
+    bundler: "Vite"
+
+# ============================================================
+# Agent Definitions
+# ============================================================
+
+agents:
+  # ----------------------------------------------------------
+  # 🏗️ Architect Agent
+  # Responsible for high-level design decisions and structure
+  # ----------------------------------------------------------
+  - name: "architect"
+    role: "System Architect"
+    description: >
+      Makes high-level architecture decisions, designs module boundaries,
+      defines API contracts between frontend and backend, and ensures
+      the codebase follows clean architecture principles.
+    responsibilities:
+      - Define Tauri IPC command signatures
+      - Design Rust module structure (engine/, commands/, utils/)
+      - Plan frontend component hierarchy
+      - Review PRs for architectural consistency
+      - Maintain ARCHITECTURE.md documentation
+    guidelines:
+      - Always prefer pure Rust crates over C bindings
+      - Keep Tauri commands thin — delegate logic to engine modules
+      - Frontend should NEVER directly manipulate PDF bytes
+      - All PDF processing happens in Rust, UI is purely presentational
+
+  # ----------------------------------------------------------
+  # 🦀 Rust Engine Agent
+  # Responsible for the core PDF inversion engine
+  # ----------------------------------------------------------
+  - name: "rust-engine"
+    role: "PDF Engine Developer"
+    description: >
+      Builds and maintains the core Rust PDF processing engine —
+      content stream parsing, color mapping, image detection,
+      theme application, and batch processing.
+    responsibilities:
+      - Implement content stream tokenizer and parser
+      - Build luminance-based color mapping algorithm
+      - Detect and classify PDF XObjects (images vs. forms)
+      - Implement theme application to PDF color operators
+      - Build multi-threaded batch processor with rayon
+      - Write unit and integration tests for all engine modules
+    guidelines:
+      - Use `lopdf` for all PDF structural manipulation
+      - Never rasterize pages — always work with vector content streams
+      - Color mapping must preserve hue for mid-tone colors
+      - Image handling must be configurable (preserve/dim/full-invert)
+      - All errors must use custom `VenomError` type with `thiserror`
+      - Target < 500ms for a 10-page PDF inversion
+
+  # ----------------------------------------------------------
+  # 🎨 Frontend Agent
+  # Responsible for the React/TypeScript UI
+  # ----------------------------------------------------------
+  - name: "frontend"
+    role: "UI/UX Developer"
+    description: >
+      Builds the React frontend with TypeScript and Tailwind CSS.
+      Creates all UI components, manages state with Zustand,
+      integrates pdf.js for preview, and handles Tauri IPC calls.
+    responsibilities:
+      - Implement all UI components (see IMPLEMENTATION_PLAN.md)
+      - Build theme picker with live preview cards
+      - Integrate pdf.js for in-app PDF rendering
+      - Create IPC hooks for Rust command invocation
+      - Handle drag-and-drop file loading
+      - Build batch processing queue with progress visualization
+      - Ensure responsive layout and keyboard shortcuts
+    guidelines:
+      - Use Tailwind CSS utility classes — no custom CSS unless necessary
+      - Use Zustand for global state (not Redux or Context API)
+      - All Tauri IPC calls go through custom hooks in `hooks/`
+      - Components must be typed with explicit interfaces
+      - Follow VS Code-inspired dark UI aesthetic
+      - Accent color: toxic green (#39FF14)
+
+  # ----------------------------------------------------------
+  # 🧪 QA Agent
+  # Responsible for testing and quality assurance
+  # ----------------------------------------------------------
+  - name: "qa"
+    role: "Quality Assurance"
+    description: >
+      Manages the test suite, creates test PDFs, runs benchmarks,
+      and validates cross-platform compatibility.
+    responsibilities:
+      - Create and maintain test PDF corpus
+      - Write Rust unit tests for engine modules
+      - Write integration tests for full inversion pipeline
+      - Set up visual regression testing
+      - Run performance benchmarks and track metrics
+      - Validate output PDFs for text selectability and searchability
+      - Test on Windows, macOS, and Linux
+    guidelines:
+      - Every engine function must have at least 3 test cases
+      - Performance benchmarks must run in CI
+      - Test PDFs must cover all edge cases (encrypted, scanned, mixed)
+      - Output PDFs must pass pdf.js rendering validation
+
+  # ----------------------------------------------------------
+  # 📦 DevOps Agent
+  # Responsible for CI/CD, builds, and releases
+  # ----------------------------------------------------------
+  - name: "devops"
+    role: "Build & Release Engineer"
+    description: >
+      Manages GitHub Actions CI/CD, Tauri build configurations,
+      installer creation, and release automation.
+    responsibilities:
+      - Configure GitHub Actions for CI (lint, test, build)
+      - Set up Tauri build for Windows (.msi), macOS (.dmg), Linux (.AppImage/.deb)
+      - Configure Windows context menu registration in installer
+      - Automate GitHub Releases with changelogs
+      - Manage code signing certificates
+    guidelines:
+      - CI must run on every PR (lint + test + build)
+      - Release builds triggered by version tags (v*)
+      - Windows installer must register context menu entry
+      - Keep installer size under 15 MB
+
+# ============================================================
+# Workflow Definitions
+# ============================================================
+
+workflows:
+  # ----------------------------------------------------------
+  # New Feature Workflow
+  # ----------------------------------------------------------
+  - name: "new-feature"
+    description: "Standard workflow for implementing a new feature"
+    steps:
+      - agent: "architect"
+        action: "Design the feature's architecture and define interfaces"
+      - agent: "rust-engine"
+        action: "Implement backend logic and Tauri commands"
+        condition: "If feature requires PDF processing"
+      - agent: "frontend"
+        action: "Implement UI components and IPC integration"
+        condition: "If feature has a UI component"
+      - agent: "qa"
+        action: "Write tests and validate the feature"
+      - agent: "devops"
+        action: "Update CI if new build steps are needed"
+
+  # ----------------------------------------------------------
+  # Bug Fix Workflow
+  # ----------------------------------------------------------
+  - name: "bug-fix"
+    description: "Standard workflow for fixing a reported bug"
+    steps:
+      - agent: "qa"
+        action: "Reproduce the bug and create a failing test"
+      - agent: "rust-engine"
+        action: "Fix the root cause in engine code"
+        condition: "If bug is in PDF processing"
+      - agent: "frontend"
+        action: "Fix the root cause in UI code"
+        condition: "If bug is in the UI"
+      - agent: "qa"
+        action: "Verify fix passes all tests"
+
+  # ----------------------------------------------------------
+  # Release Workflow
+  # ----------------------------------------------------------
+  - name: "release"
+    description: "Workflow for cutting a new release"
+    steps:
+      - agent: "qa"
+        action: "Run full test suite + performance benchmarks"
+      - agent: "devops"
+        action: "Bump version, build installers, create GitHub Release"
+      - agent: "frontend"
+        action: "Update README screenshots and changelog"

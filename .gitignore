@@ -1,0 +1,45 @@
+# ============================================================
+# Venom PDF — .gitignore
+# ============================================================
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+target/
+src-tauri/target/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Tauri
+src-tauri/WixTools/
+src-tauri/icons/*.ico.bak
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+test-results/
+
+# Temporary
+*.tmp
+*.bak
+scratch/
