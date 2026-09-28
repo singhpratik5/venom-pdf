@@ -4,14 +4,15 @@ import { InvertOptions, PdfFileInfo } from '../types';
 export const usePdfEngine = () => {
   const getPdfInfo = async (path: string): Promise<PdfFileInfo> => {
     try {
-      // return await invoke('get_pdf_info', { path });
-      // Placeholder for now
+      if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
+        return await invoke<PdfFileInfo>('get_pdf_info', { path });
+      }
       return {
         path,
         name: path.split(/[/\\]/).pop() || 'document.pdf',
-        pageCount: 10,
-        fileSize: 1024 * 1024 * 2.5, // 2.5 MB
-        hasImages: true
+        pageCount: 1,
+        fileSize: 1024 * 1024,
+        hasImages: true,
       };
     } catch (error) {
       console.error('Failed to get PDF info:', error);
@@ -21,9 +22,17 @@ export const usePdfEngine = () => {
 
   const invertPdf = async (inputPath: string, outputPath: string, options: InvertOptions) => {
     try {
-      // await invoke('invert_pdf', { inputPath, outputPath, options });
-      console.log('Inverting PDF:', inputPath, outputPath, options);
-      return new Promise(resolve => setTimeout(resolve, 2000)); // mock delay
+      if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
+        return await invoke<string>('invert_pdf', {
+          inputPath,
+          outputPath,
+          themeName: options.theme.name,
+          imageMode: options.imageMode,
+          pageRange: options.pageRange || 'all',
+        });
+      }
+      console.log('Mock inverting PDF:', inputPath, outputPath, options);
+      return new Promise((resolve) => setTimeout(resolve, 1500));
     } catch (error) {
       console.error('Failed to invert PDF:', error);
       throw error;

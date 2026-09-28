@@ -5,6 +5,10 @@ description = "A Tauri App to invert PDFs"
 authors = ["Venom PDF"]
 edition = "2021"
 
+[lib]
+name = "venom_pdf_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
 [build-dependencies]
 tauri-build = "2"
 

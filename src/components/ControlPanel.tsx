@@ -47,7 +47,11 @@ const ControlPanel: React.FC = () => {
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Image Handling</h3>
           <div className="flex flex-col space-y-2">
             {(['preserve', 'dim', 'full_invert'] as ImageMode[]).map((mode) => (
-              <label key={mode} className="flex items-center space-x-3 cursor-pointer group">
+              <label
+                key={mode}
+                onClick={() => setImageMode(mode)}
+                className="flex items-center space-x-3 cursor-pointer group"
+              >
                 <div className={clsx(
                   "w-4 h-4 rounded-full border flex items-center justify-center transition-colors",
                   imageMode === mode ? "border-accent-toxic" : "border-gray-500 group-hover:border-gray-400"
