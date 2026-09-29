@@ -1,0 +1,85 @@
+name: Release Multi-Platform Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            os: windows
+            args: ''
+          - platform: ubuntu-22.04
+            os: linux
+            args: ''
+          - platform: macos-latest
+            os: macos
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install Linux Dependencies
+        if: matrix.os == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Install Frontend Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Desktop Binaries & Publish Release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Venom PDF ${{ github.ref_name }}'
+          releaseBody: |
+            ## 🐍 Venom PDF ${{ github.ref_name }}
+            
+            ### ✨ What's Included:
+            - **Intelligent Vector Inversion Engine:** Non-destructive dark mode conversion preserving vector sharpness and searchability.
+            - **6 Ergonomic Color Themes:** Venom Dark, OLED Black, Dracula, Nord, Sepia, Solarized.
+            - **Intelligent Image Separation:** Raster photos preserved in full color, dimmed, or inverted.
+            - **Rayon Parallel Batch Processing:** High-throughput multi-core batch directory processor.
+            - **Windows Shell Integration:** Right-click context menu for instant file and folder inversion.
+            - **Headless CLI Mode:** Automated command-line operation for terminal power users and scripts.
+            - **Interactive PDF Preview:** Instant GPU-accelerated canvas simulation with live page navigation.
+            
+            ### 📦 Download Assets:
+            - **Windows:** Download `.msi` or `.exe` installer.
+            - **macOS:** Download `.dmg` installer.
+            - **Linux:** Download `.deb` package or universal `.AppImage`.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
