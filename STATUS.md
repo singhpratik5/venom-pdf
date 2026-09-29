@@ -1,24 +1,24 @@
 # 📊 Venom PDF — Project Status
 
 > **Last Updated:** 2026-09-29  
-> **Current Phase:** Phase 4 Complete ✅ → Moving to Phase 5 (OS Integration & CLI)  
-> **Overall Progress:** █████████░ 88%
+> **Current Phase:** Phase 5 Complete ✅ → Ready for Phase 6 (Testing & Final Polish)  
+> **Overall Progress:** ██████████ 96%
 
 ---
 
-## 🏁 Current Sprint: Batch Processing Engine & UI Integration
+## 🏁 Completed Sprint: OS Integration & CLI Mode (Phase 5)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Rayon Parallel Batch Engine (`batch_invert`) | ✅ Done | Data-parallel multi-core file processor |
-| Folder Scanner (`scan_folder_for_pdfs`) | ✅ Done | Recursive directory walker detecting all `.pdf` documents |
-| Real-time Event Streaming | ✅ Done | Detailed `batch-progress` events with file name, id, progress, error |
-| BatchQueue Component | ✅ Done | Queue statistics bar, action toolbar, individual progress bars |
-| "Queue All Open" Workflow | ✅ Done | Instantly stages all Explorer documents for batch processing |
-| "Scan Folder" Workflow | ✅ Done | Native folder picker staging whole folders of PDFs into queue |
-| Per-File Error Isolation | ✅ Done | Failed files display clear error banners without halting batch |
-| Dual-Runtime Support | ✅ Done | Full Tauri command execution + smooth web simulation fallback |
-| Frontend Production Build | ✅ Done | `pnpm build` passes with zero errors/warnings in < 5s |
+| Headless CLI Parser (`cli.rs`) | ✅ Done | Zero-dependency command line parser supporting `--invert`, `--batch`, `--theme`, `--image-mode`, `--pages`, `--output`, `--list-themes` |
+| Headless Engine Execution | ✅ Done | Non-GUI direct file processing via `invert_pdf_sync` with exit codes 0/1 |
+| Windows Console Attachment | ✅ Done | `AttachConsole(ATTACH_PARENT_PROCESS)` enables native terminal stdout/stderr output in PowerShell & CMD |
+| Windows Explorer Context Menu | ✅ Done | Per-user `HKCU` registry integration (`SystemFileAssociations\.pdf` & `Directory\shell\VenomPDFBatch`) requiring zero admin rights |
+| Tauri OS Commands | ✅ Done | `check_context_menu_status`, `enable_context_menu`, `disable_context_menu` |
+| Frontend Shell & CLI Modal | ✅ Done | `OsIntegrationModal.tsx` with live context menu status toggle & 1-click copy CLI cheatsheet |
+| Bundler & File Associations | ✅ Done | `tauri.conf.json` configured with `.pdf` file associations, WiX, and NSIS configurations |
+| Registry Scripts | ✅ Done | Standalone `.reg` scripts in `assets/registry/` for manual & enterprise deployment |
+| CLI Unit Test Suite | ✅ Done | Complete test matrix for flag parsing, defaults, positional files, and error handling |
 
 ---
 
@@ -64,16 +64,19 @@
 - [x] "Queue All Open" & "Scan Folder" UI workflows
 - [x] Per-file error handling & status tracking
 
-### Phase 5: OS Integration ░░░░░░░░░░ 0%
-- [ ] Windows context menu registration
-- [ ] CLI argument parser (`--invert`, `--batch`, `--theme`)
-- [ ] Headless CLI mode
-- [ ] Installer configurations (`.msi`, `.dmg`, `.AppImage`)
+### Phase 5: OS Integration & CLI Mode ██████████ 100%
+- [x] Windows File Explorer context menu registration (`ContextMenuManager`)
+- [x] Headless CLI parser (`--invert`, `--batch`, `--theme`, `--image-mode`, `--pages`, `--output`)
+- [x] Console output attachment on Windows (`AttachConsole`)
+- [x] UI Context Menu management & CLI Cheatsheet modal (`OsIntegrationModal`)
+- [x] Standalone registry deployment scripts (`assets/registry/*.reg`)
+- [x] Installer & file association configuration in `tauri.conf.json`
+- [x] CLI parser unit test matrix
 
-### Phase 6: Testing & Polish █████░░░░░ 50%
-- [x] Rust unit test suites in `color_mapper`, `content_stream`, `image_detector`, `page_filter`, `theme`, `batch`
+### Phase 6: Testing & Final Polish ███████░░░ 70%
+- [x] Rust unit test suites in `color_mapper`, `content_stream`, `image_detector`, `page_filter`, `theme`, `batch`, `cli`, `context_menu`
 - [x] Rust integration test suite in `tests/integration_test.rs`
-- [x] Vite production bundle verification
+- [x] Frontend TypeScript type-checking & production bundle (`pnpm build`)
 - [ ] Visual regression test suite
 - [ ] Cross-platform performance benchmarks
 
@@ -83,6 +86,9 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-09-29 | **Zero-Dependency CLI Parser** | Handcrafted argument parser avoids heavy CLI dependency overhead and keeps compile times minimal |
+| 2026-09-29 | **Dual-Subsystem Windows Routing** | Automatically routes between Headless CLI execution (`run_cli`) and GUI runtime (`run`) based on launch arguments |
+| 2026-09-29 | **HKCU Context Menu Registration** | Writing to `HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations\.pdf` eliminates UAC / Administrator prompts |
+| 2026-09-29 | **Windows Terminal Console Attachment** | `AttachConsole(ATTACH_PARENT_PROCESS)` enables Windows GUI binary to print directly to PowerShell / CMD |
 | 2026-09-29 | **Folder Scanner (`scan_folder_for_pdfs`)** | Adds native directory traversal to instantly discover all PDF files in a chosen folder |
 | 2026-09-29 | **Granular Event Emission** | Emits start (25%), progress, and completion (100%) events with file names and error messages for maximum UI responsiveness |
-| 2026-09-29 | **Queue Staging Model** | Users can combine individual files, whole folders, and open documents into a single unified queue before firing the batch |

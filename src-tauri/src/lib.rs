@@ -1,3 +1,4 @@
+pub mod cli;
 pub mod commands;
 pub mod engine;
 pub mod utils;
@@ -15,6 +16,9 @@ pub fn run() {
             commands::preview::get_pdf_info,
             commands::file_ops::open_file_dialog,
             commands::file_ops::open_folder_dialog,
+            commands::os_integration::check_context_menu_status,
+            commands::os_integration::enable_context_menu,
+            commands::os_integration::disable_context_menu,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

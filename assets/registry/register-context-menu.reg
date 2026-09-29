@@ -1,0 +1,23 @@
+Windows Registry Editor Version 5.00
+
+; ====================================================================
+; Venom PDF - Windows File Explorer Context Menu Integration
+; Registers right-click menu items for PDF files and directories.
+; Applied per-user (HKEY_CURRENT_USER) - No Administrator rights needed.
+; ====================================================================
+
+; Right-click any PDF file to invert in Venom Dark Mode
+[HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations\.pdf\shell\VenomPDF]
+@="Invert with Venom PDF (Dark Mode)"
+"Icon"="\"%LOCALAPPDATA%\\Programs\\Venom PDF\\venom-pdf.exe\",0"
+
+[HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations\.pdf\shell\VenomPDF\command]
+@="\"%LOCALAPPDATA%\\Programs\\Venom PDF\\venom-pdf.exe\" --invert \"%1\""
+
+; Right-click any directory to batch invert all contained PDFs
+[HKEY_CURRENT_USER\Software\Classes\Directory\shell\VenomPDFBatch]
+@="Batch Invert PDFs with Venom PDF"
+"Icon"="\"%LOCALAPPDATA%\\Programs\\Venom PDF\\venom-pdf.exe\",0"
+
+[HKEY_CURRENT_USER\Software\Classes\Directory\shell\VenomPDFBatch\command]
+@="\"%LOCALAPPDATA%\\Programs\\Venom PDF\\venom-pdf.exe\" --batch \"%1\""

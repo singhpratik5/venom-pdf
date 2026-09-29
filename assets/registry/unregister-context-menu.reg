@@ -1,0 +1,9 @@
+Windows Registry Editor Version 5.00
+
+; ====================================================================
+; Venom PDF - Windows File Explorer Context Menu Uninstaller
+; Removes all right-click menu registrations from HKEY_CURRENT_USER.
+; ====================================================================
+
+[-HKEY_CURRENT_USER\Software\Classes\SystemFileAssociations\.pdf\shell\VenomPDF]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\VenomPDFBatch]

@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
-import { FolderOpen, Download, Sparkles, Github } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { FolderOpen, Download, Sparkles, Github, Terminal } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { usePdfEngine } from '../hooks/usePdfEngine';
 import { generateSamplePdfBytes } from '../utils/samplePdf';
 import * as pdfjsLib from 'pdfjs-dist';
+import OsIntegrationModal from './OsIntegrationModal';
 
 const TopToolbar: React.FC = () => {
   const {
@@ -20,6 +21,7 @@ const TopToolbar: React.FC = () => {
 
   const { openFileDialog, getPdfInfo, invertPdf } = usePdfEngine();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isOsModalOpen, setIsOsModalOpen] = useState(false);
 
   const activeFile = activeFileIndex !== null ? files[activeFileIndex] : null;
 
@@ -141,6 +143,15 @@ const TopToolbar: React.FC = () => {
       </div>
 
       <div className="flex items-center space-x-2">
+        <button
+          onClick={() => setIsOsModalOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs bg-background-main border border-background-border text-gray-300 hover:text-accent-toxic hover:border-accent-toxic/40 transition-colors"
+          title="Windows Context Menu & Headless CLI Settings"
+        >
+          <Terminal size={14} className="text-accent-toxic" />
+          <span>CLI & Shell</span>
+        </button>
+
         <a
           href="https://github.com/singhpratik5/venom-pdf"
           target="_blank"
@@ -152,6 +163,11 @@ const TopToolbar: React.FC = () => {
           <span>GitHub</span>
         </a>
       </div>
+
+      <OsIntegrationModal
+        isOpen={isOsModalOpen}
+        onClose={() => setIsOsModalOpen(false)}
+      />
     </div>
   );
 };

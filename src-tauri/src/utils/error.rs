@@ -5,18 +5,24 @@ use thiserror::Error;
 pub enum VenomError {
     #[error("Failed to parse PDF: {0}")]
     PdfParse(String),
-    
+
     #[error("Invalid page range: {0}")]
     InvalidPageRange(String),
-    
+
     #[error("IO Error: {0}")]
     IoError(String),
-    
+
     #[error("Image processing error: {0}")]
     ImageProcess(String),
-    
+
     #[error("Theme not found: {0}")]
     ThemeNotFound(String),
+
+    #[error("CLI argument error: {0}")]
+    CliError(String),
+
+    #[error("OS shell integration error: {0}")]
+    ShellIntegration(String),
 }
 
 impl From<std::io::Error> for VenomError {

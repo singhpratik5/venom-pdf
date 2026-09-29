@@ -1,4 +1,5 @@
 {
+  "$schema": "https://schema.tauri.app/config/2",
   "productName": "Venom PDF",
   "version": "0.1.0",
   "identifier": "com.venompdf.app",
@@ -19,6 +20,29 @@
     ],
     "security": {
       "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "Native High-Performance PDF Dark Mode Inverter",
+    "longDescription": "Venom PDF inverts PDF documents into beautiful dark mode themes (Venom Dark, OLED Black, Dracula, Nord, Sepia, Solarized) with smart text inversion and raster image preservation.",
+    "fileAssociations": [
+      {
+        "ext": ["pdf"],
+        "name": "PDF Document",
+        "description": "Portable Document Format",
+        "role": "Editor"
+      }
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["en-US"]
+      },
+      "wix": {
+        "language": "en-US"
+      }
     }
   }
 }
