@@ -11,8 +11,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::invert::invert_pdf,
             commands::batch::batch_invert,
+            commands::batch::scan_folder_for_pdfs,
             commands::preview::get_pdf_info,
             commands::file_ops::open_file_dialog,
+            commands::file_ops::open_folder_dialog,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

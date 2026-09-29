@@ -32,4 +32,16 @@ export interface BatchJob {
   fileName: string;
   status: 'pending' | 'processing' | 'done' | 'error';
   progress: number;
+  errorMessage?: string;
+}
+
+export interface BatchProgressPayload {
+  id: string;
+  filePath: string;
+  fileName: string;
+  current: number;
+  total: number;
+  progress: number;
+  status: 'pending' | 'processing' | 'done' | 'error';
+  errorMessage?: string;
 }

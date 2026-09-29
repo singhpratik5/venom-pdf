@@ -8,19 +8,25 @@ export interface AppState {
   imageMode: ImageMode;
   pageRange: string;
   batchJobs: BatchJob[];
+  batchOutputDir: string;
   isProcessing: boolean;
   currentPage: number;
   zoom: number;
   previewMode: 'dark' | 'original';
 
   addFile: (file: PdfFileInfo) => void;
+  addFiles: (files: PdfFileInfo[]) => void;
   removeFile: (index: number) => void;
   setActiveFile: (index: number | null) => void;
   setTheme: (theme: VenomTheme) => void;
   setImageMode: (mode: ImageMode) => void;
   setPageRange: (range: string) => void;
   addBatchJob: (job: BatchJob) => void;
+  setBatchJobs: (jobs: BatchJob[]) => void;
   updateBatchJob: (id: string, updates: Partial<BatchJob>) => void;
+  clearBatchJobs: () => void;
+  setBatchOutputDir: (dir: string) => void;
+  queueAllOpenFiles: () => void;
   startProcessing: () => void;
   stopProcessing: () => void;
   setCurrentPage: (page: number) => void;
@@ -29,21 +35,22 @@ export interface AppState {
 }
 
 const defaultTheme: VenomTheme = {
-  id: 'dark-default',
+  id: 'venom-dark',
   name: 'Venom Dark',
   background: '#1e1e1e',
   text: '#d4d4d4',
   accent: '#39FF14',
-  description: 'Default dark theme'
+  description: 'Default high contrast dark mode',
 };
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   files: [],
   activeFileIndex: null,
   theme: defaultTheme,
   imageMode: 'preserve',
   pageRange: '',
   batchJobs: [],
+  batchOutputDir: '',
   isProcessing: false,
   currentPage: 1,
   zoom: 1.0,
@@ -54,6 +61,11 @@ export const useAppStore = create<AppState>((set) => ({
       files: [...state.files, file],
       activeFileIndex: state.files.length,
       currentPage: 1,
+    })),
+  addFiles: (newFiles) =>
+    set((state) => ({
+      files: [...state.files, ...newFiles],
+      activeFileIndex: state.files.length > 0 ? state.activeFileIndex ?? 0 : 0,
     })),
   removeFile: (index) =>
     set((state) => {
@@ -72,12 +84,31 @@ export const useAppStore = create<AppState>((set) => ({
   setImageMode: (imageMode) => set({ imageMode }),
   setPageRange: (pageRange) => set({ pageRange }),
   addBatchJob: (job) => set((state) => ({ batchJobs: [...state.batchJobs, job] })),
+  setBatchJobs: (batchJobs) => set({ batchJobs }),
   updateBatchJob: (id, updates) =>
     set((state) => ({
       batchJobs: state.batchJobs.map((job) =>
-        job.id === id ? { ...job, ...updates } : job
+        job.id === id || job.filePath === id ? { ...job, ...updates } : job
       ),
     })),
+  clearBatchJobs: () => set({ batchJobs: [] }),
+  setBatchOutputDir: (batchOutputDir) => set({ batchOutputDir }),
+  queueAllOpenFiles: () => {
+    const { files, batchJobs } = get();
+    const existingPaths = new Set(batchJobs.map((j) => j.filePath));
+    const newJobs: BatchJob[] = files
+      .filter((f) => !existingPaths.has(f.path))
+      .map((f, i) => ({
+        id: `job_${Date.now()}_${i}`,
+        filePath: f.path,
+        fileName: f.name,
+        status: 'pending',
+        progress: 0,
+      }));
+    if (newJobs.length > 0) {
+      set({ batchJobs: [...batchJobs, ...newJobs] });
+    }
+  },
   startProcessing: () => set({ isProcessing: true }),
   stopProcessing: () => set({ isProcessing: false }),
   setCurrentPage: (page) => set({ currentPage: page }),

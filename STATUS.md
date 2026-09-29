@@ -1,24 +1,24 @@
 # 📊 Venom PDF — Project Status
 
 > **Last Updated:** 2026-09-29  
-> **Current Phase:** Phase 3 Complete ✅ → Moving to Phase 4 (Batch Processing Polish) & Phase 5  
-> **Overall Progress:** ████████░░ 75%
+> **Current Phase:** Phase 4 Complete ✅ → Moving to Phase 5 (OS Integration & CLI)  
+> **Overall Progress:** █████████░ 88%
 
 ---
 
-## 🏁 Current Sprint: Theme System & PDF.js Preview UI Integration
+## 🏁 Current Sprint: Batch Processing Engine & UI Integration
 
 | Task | Status | Notes |
 |------|--------|-------|
-| PDF.js Integration (`pdfjs-dist`) | ✅ Done | Native worker setup, ESM-compatible Vite pipeline |
-| Live Canvas Preview | ✅ Done | High DPI responsive rendering with auto-cancel on page flips |
-| Real-time Dark Theme Simulation | ✅ Done | GPU-accelerated SVG `<feColorMatrix>` calculating linear color mapping |
-| Drag & Drop Document Loader | ✅ Done | Drag `.pdf` files directly onto viewport or explorer |
-| Built-in Demo Generator | ✅ Done | Instant multi-page sample PDF byte generator for quick testing |
-| Curated Theme Presets | ✅ Done | Venom Dark, OLED Black, Dracula, Nord, Sepia, Solarized, Custom |
-| Preview Mode Switch | ✅ Done | One-click toggle between Inverted Theme and Original Document |
-| Viewer Controls | ✅ Done | Page jump, keyboard shortcuts, zoom (50%-250%), reset |
-| Frontend Production Build | ✅ Done | `pnpm build` passing cleanly with zero warnings/errors |
+| Rayon Parallel Batch Engine (`batch_invert`) | ✅ Done | Data-parallel multi-core file processor |
+| Folder Scanner (`scan_folder_for_pdfs`) | ✅ Done | Recursive directory walker detecting all `.pdf` documents |
+| Real-time Event Streaming | ✅ Done | Detailed `batch-progress` events with file name, id, progress, error |
+| BatchQueue Component | ✅ Done | Queue statistics bar, action toolbar, individual progress bars |
+| "Queue All Open" Workflow | ✅ Done | Instantly stages all Explorer documents for batch processing |
+| "Scan Folder" Workflow | ✅ Done | Native folder picker staging whole folders of PDFs into queue |
+| Per-File Error Isolation | ✅ Done | Failed files display clear error banners without halting batch |
+| Dual-Runtime Support | ✅ Done | Full Tauri command execution + smooth web simulation fallback |
+| Frontend Production Build | ✅ Done | `pnpm build` passes with zero errors/warnings in < 5s |
 
 ---
 
@@ -56,12 +56,13 @@
 - [x] Drag & drop file loading + built-in demo document
 - [x] IPC bridge (`usePdfEngine` hook wired to Tauri `invoke`)
 
-### Phase 4: Batch Processing ████████░░ 80%
+### Phase 4: Batch Processing ██████████ 100%
 - [x] Rayon-based parallel processor (`batch_invert`)
+- [x] Folder scanner (`scan_folder_for_pdfs`) & picker dialog
 - [x] Progress event emission (`batch-progress` from Rust → Frontend)
-- [x] `BatchQueue` component with progress bars
-- [ ] Folder drag-and-drop recursive loader
-- [x] Per-file error handling
+- [x] `BatchQueue` component with progress bars & statistics
+- [x] "Queue All Open" & "Scan Folder" UI workflows
+- [x] Per-file error handling & status tracking
 
 ### Phase 5: OS Integration ░░░░░░░░░░ 0%
 - [ ] Windows context menu registration
@@ -69,8 +70,8 @@
 - [ ] Headless CLI mode
 - [ ] Installer configurations (`.msi`, `.dmg`, `.AppImage`)
 
-### Phase 6: Testing & Polish ████░░░░░░ 45%
-- [x] Rust unit test suites in `color_mapper`, `content_stream`, `image_detector`, `page_filter`, `theme`
+### Phase 6: Testing & Polish █████░░░░░ 50%
+- [x] Rust unit test suites in `color_mapper`, `content_stream`, `image_detector`, `page_filter`, `theme`, `batch`
 - [x] Rust integration test suite in `tests/integration_test.rs`
 - [x] Vite production bundle verification
 - [ ] Visual regression test suite
@@ -82,6 +83,6 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-09-29 | **Real-time Color Matrix Filter** | Instead of re-converting the whole PDF in Rust on every theme switch, the UI dynamically computes an SVG `<feColorMatrix>` to simulate the dark mode instantly with 0ms latency |
-| 2026-09-29 | **Built-in Demo Generator** | Allows users and testers to experience Venom PDF immediately without needing an external test PDF |
-| 2026-09-29 | **Dual File Reading Strategy** | Supports desktop filesystem via Tauri `plugin-fs` as well as in-memory ArrayBuffers for web drag & drop |
+| 2026-09-29 | **Folder Scanner (`scan_folder_for_pdfs`)** | Adds native directory traversal to instantly discover all PDF files in a chosen folder |
+| 2026-09-29 | **Granular Event Emission** | Emits start (25%), progress, and completion (100%) events with file names and error messages for maximum UI responsiveness |
+| 2026-09-29 | **Queue Staging Model** | Users can combine individual files, whole folders, and open documents into a single unified queue before firing the batch |

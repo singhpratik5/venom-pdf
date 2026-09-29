@@ -12,3 +12,13 @@ pub async fn open_file_dialog(app: AppHandle) -> Result<Option<String>, VenomErr
 
     Ok(file_path.map(|p| p.to_string()))
 }
+
+#[tauri::command]
+pub async fn open_folder_dialog(app: AppHandle) -> Result<Option<String>, VenomError> {
+    let folder_path = app
+        .dialog()
+        .file()
+        .blocking_pick_folder();
+
+    Ok(folder_path.map(|p| p.to_string()))
+}
