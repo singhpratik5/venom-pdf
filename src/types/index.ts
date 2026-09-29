@@ -23,6 +23,7 @@ export interface PdfFileInfo {
   pageCount: number;
   fileSize: number;
   hasImages: boolean;
+  data?: Uint8Array;
 }
 
 export interface BatchJob {
