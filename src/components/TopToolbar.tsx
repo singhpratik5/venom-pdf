@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { FolderOpen, Download, Sparkles, Github, Terminal } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { usePdfEngine } from '../hooks/usePdfEngine';
@@ -17,11 +17,12 @@ const TopToolbar: React.FC = () => {
     isProcessing,
     startProcessing,
     stopProcessing,
+    isOsModalOpen,
+    setIsOsModalOpen,
   } = useAppStore();
 
   const { openFileDialog, getPdfInfo, invertPdf } = usePdfEngine();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [isOsModalOpen, setIsOsModalOpen] = useState(false);
 
   const activeFile = activeFileIndex !== null ? files[activeFileIndex] : null;
 

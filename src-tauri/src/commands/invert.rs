@@ -102,6 +102,12 @@ pub fn invert_pdf_sync(
 
     let pages = doc.get_pages();
     let total_pages = pages.len() as u32;
+    if total_pages == 0 {
+        return Err(VenomError::PdfParse(format!(
+            "PDF document '{}' contains no pages",
+            input_path
+        )));
+    }
     let target_page_numbers = parse_page_range(page_range, total_pages)?;
     let target_page_set: HashSet<u32> = target_page_numbers.into_iter().collect();
 
@@ -155,6 +161,12 @@ pub fn invert_pdf_sync(
         }
 
         let _ = process_page_images(&mut doc, page_id, image_mode);
+    }
+
+    if let Some(parent) = std::path::Path::new(output_path).parent() {
+        if !parent.as_os_str().is_empty() {
+            let _ = std::fs::create_dir_all(parent);
+        }
     }
 
     doc.save(output_path)

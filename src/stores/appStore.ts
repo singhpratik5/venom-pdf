@@ -13,6 +13,7 @@ export interface AppState {
   currentPage: number;
   zoom: number;
   previewMode: 'dark' | 'original';
+  isOsModalOpen: boolean;
 
   addFile: (file: PdfFileInfo) => void;
   addFiles: (files: PdfFileInfo[]) => void;
@@ -32,6 +33,7 @@ export interface AppState {
   setCurrentPage: (page: number) => void;
   setZoom: (zoom: number) => void;
   setPreviewMode: (mode: 'dark' | 'original') => void;
+  setIsOsModalOpen: (open: boolean) => void;
 }
 
 const defaultTheme: VenomTheme = {
@@ -55,6 +57,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentPage: 1,
   zoom: 1.0,
   previewMode: 'dark',
+  isOsModalOpen: false,
+
+  setIsOsModalOpen: (open) => set({ isOsModalOpen: open }),
 
   addFile: (file) =>
     set((state) => ({

@@ -146,31 +146,92 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                 new_ops.push(op);
             }
 
-            // Color in current colorspace (sc, scn, SC, SCN)
-            "sc" | "scn" if op.operands.len() >= 3 => {
-                if let (Some(r), Some(g), Some(b)) = (
-                    object_to_f32(&op.operands[0]),
-                    object_to_f32(&op.operands[1]),
-                    object_to_f32(&op.operands[2]),
-                ) {
-                    let (mr, mg, mb) = map_color(r, g, b, theme);
-                    op.operands[0] = Object::Real(mr as f64);
-                    op.operands[1] = Object::Real(mg as f64);
-                    op.operands[2] = Object::Real(mb as f64);
+            // Color in current colorspace (sc, scn) - non-stroking
+            "sc" | "scn" => {
+                if op.operands.len() == 1 {
+                    // DeviceGray
+                    if let Some(gray) = object_to_f32(&op.operands[0]) {
+                        let (mr, mg, mb) = map_gray(gray, theme);
+                        op.operator = "rg".to_string();
+                        op.operands = vec![
+                            Object::Real(mr as f64),
+                            Object::Real(mg as f64),
+                            Object::Real(mb as f64),
+                        ];
+                    }
+                } else if op.operands.len() == 4 {
+                    // DeviceCMYK
+                    if let (Some(c), Some(m), Some(y), Some(k)) = (
+                        object_to_f32(&op.operands[0]),
+                        object_to_f32(&op.operands[1]),
+                        object_to_f32(&op.operands[2]),
+                        object_to_f32(&op.operands[3]),
+                    ) {
+                        let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
+                        op.operands = vec![
+                            Object::Real(mc as f64),
+                            Object::Real(mm as f64),
+                            Object::Real(my as f64),
+                            Object::Real(mk as f64),
+                        ];
+                    }
+                } else if op.operands.len() >= 3 {
+                    // DeviceRGB
+                    if let (Some(r), Some(g), Some(b)) = (
+                        object_to_f32(&op.operands[0]),
+                        object_to_f32(&op.operands[1]),
+                        object_to_f32(&op.operands[2]),
+                    ) {
+                        let (mr, mg, mb) = map_color(r, g, b, theme);
+                        op.operands[0] = Object::Real(mr as f64);
+                        op.operands[1] = Object::Real(mg as f64);
+                        op.operands[2] = Object::Real(mb as f64);
+                    }
                 }
                 new_ops.push(op);
             }
 
-            "SC" | "SCN" if op.operands.len() >= 3 => {
-                if let (Some(r), Some(g), Some(b)) = (
-                    object_to_f32(&op.operands[0]),
-                    object_to_f32(&op.operands[1]),
-                    object_to_f32(&op.operands[2]),
-                ) {
-                    let (mr, mg, mb) = map_color(r, g, b, theme);
-                    op.operands[0] = Object::Real(mr as f64);
-                    op.operands[1] = Object::Real(mg as f64);
-                    op.operands[2] = Object::Real(mb as f64);
+            // Color in current colorspace (SC, SCN) - stroking
+            "SC" | "SCN" => {
+                if op.operands.len() == 1 {
+                    // DeviceGray
+                    if let Some(gray) = object_to_f32(&op.operands[0]) {
+                        let (mr, mg, mb) = map_gray(gray, theme);
+                        op.operator = "RG".to_string();
+                        op.operands = vec![
+                            Object::Real(mr as f64),
+                            Object::Real(mg as f64),
+                            Object::Real(mb as f64),
+                        ];
+                    }
+                } else if op.operands.len() == 4 {
+                    // DeviceCMYK
+                    if let (Some(c), Some(m), Some(y), Some(k)) = (
+                        object_to_f32(&op.operands[0]),
+                        object_to_f32(&op.operands[1]),
+                        object_to_f32(&op.operands[2]),
+                        object_to_f32(&op.operands[3]),
+                    ) {
+                        let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
+                        op.operands = vec![
+                            Object::Real(mc as f64),
+                            Object::Real(mm as f64),
+                            Object::Real(my as f64),
+                            Object::Real(mk as f64),
+                        ];
+                    }
+                } else if op.operands.len() >= 3 {
+                    // DeviceRGB
+                    if let (Some(r), Some(g), Some(b)) = (
+                        object_to_f32(&op.operands[0]),
+                        object_to_f32(&op.operands[1]),
+                        object_to_f32(&op.operands[2]),
+                    ) {
+                        let (mr, mg, mb) = map_color(r, g, b, theme);
+                        op.operands[0] = Object::Real(mr as f64);
+                        op.operands[1] = Object::Real(mg as f64);
+                        op.operands[2] = Object::Real(mb as f64);
+                    }
                 }
                 new_ops.push(op);
             }
@@ -239,5 +300,58 @@ mod tests {
         assert_eq!(bg_ops[2].operator, "re");
         assert_eq!(bg_ops[3].operator, "f");
         assert_eq!(bg_ops[4].operator, "Q");
+    }
+
+    #[test]
+    fn test_process_sc_gray_and_cmyk() {
+        let theme = test_theme();
+
+        // 1 operand (DeviceGray)
+        let gray_op = vec![Operation::new("sc", vec![Object::Real(0.0)])];
+        let res_gray = process_operations(gray_op, &theme);
+        assert_eq!(res_gray[0].operator, "rg");
+        assert_eq!(res_gray[0].operands.len(), 3);
+
+        // 4 operands (DeviceCMYK)
+        let cmyk_op = vec![Operation::new(
+            "SC",
+            vec![
+                Object::Real(0.0),
+                Object::Real(0.0),
+                Object::Real(0.0),
+                Object::Real(1.0),
+            ],
+        )];
+        let res_cmyk = process_operations(cmyk_op, &theme);
+        assert_eq!(res_cmyk[0].operator, "SC");
+        assert_eq!(res_cmyk[0].operands.len(), 4);
+
+        // 3 operands (DeviceRGB)
+        let rgb_op = vec![Operation::new(
+            "scn",
+            vec![
+                Object::Real(0.0),
+                Object::Real(0.0),
+                Object::Real(0.0),
+            ],
+        )];
+        let res_rgb = process_operations(rgb_op, &theme);
+        assert_eq!(res_rgb[0].operator, "scn");
+        assert_eq!(res_rgb[0].operands.len(), 3);
+    }
+
+    #[test]
+    fn test_passthrough_operators() {
+        let theme = test_theme();
+        let ops = vec![
+            Operation::new("BT", vec![]),
+            Operation::new("Tf", vec![Object::Name(b"F1".to_vec()), Object::Real(12.0)]),
+            Operation::new("ET", vec![]),
+        ];
+        let processed = process_operations(ops, &theme);
+        assert_eq!(processed.len(), 3);
+        assert_eq!(processed[0].operator, "BT");
+        assert_eq!(processed[1].operator, "Tf");
+        assert_eq!(processed[2].operator, "ET");
     }
 }
