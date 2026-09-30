@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+#[cfg(windows)]
 use std::process::Command;
 
 /// Manager for Windows File Explorer context menu integration

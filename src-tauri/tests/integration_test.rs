@@ -12,7 +12,7 @@ fn generate_multi_page_pdf(path: &str, pages_count: usize) {
     for i in 1..=pages_count {
         let text = format!("Page {}", i);
         let ops = vec![
-            Operation::new("rg", vec![Object::Real(0.0), Object::Real(0.0), Object::Real(0.0)]),
+            Operation::new("rg", vec![Object::Real(0.0_f32), Object::Real(0.0_f32), Object::Real(0.0_f32)]),
             Operation::new("BT", vec![]),
             Operation::new("Tj", vec![Object::string_literal(text)]),
             Operation::new("ET", vec![]),
@@ -131,9 +131,9 @@ fn test_edge_case_mixed_colorspace_inversion() {
 
     // Mixed Gray, CMYK, and RGB stream
     let ops = vec![
-        Operation::new("g", vec![Object::Real(0.1)]),
-        Operation::new("k", vec![Object::Real(0.0), Object::Real(0.0), Object::Real(0.0), Object::Real(1.0)]),
-        Operation::new("rg", vec![Object::Real(0.9), Object::Real(0.9), Object::Real(0.9)]),
+        Operation::new("g", vec![Object::Real(0.1_f32)]),
+        Operation::new("k", vec![Object::Real(0.0_f32), Object::Real(0.0_f32), Object::Real(0.0_f32), Object::Real(1.0_f32)]),
+        Operation::new("rg", vec![Object::Real(0.9_f32), Object::Real(0.9_f32), Object::Real(0.9_f32)]),
         Operation::new("BT", vec![]),
         Operation::new("Tj", vec![Object::string_literal("Mixed Content")]),
         Operation::new("ET", vec![]),

@@ -15,7 +15,7 @@ fn get_page_dimensions(doc: &Document, page_id: ObjectId) -> (f64, f64, f64, f64
         if let Ok(Object::Array(arr)) = box_obj {
             if arr.len() == 4 {
                 let to_f64 = |obj: &Object| match obj {
-                    Object::Real(v) => Some(*v),
+                    Object::Real(v) => Some(*v as f64),
                     Object::Integer(v) => Some(*v as f64),
                     _ => None,
                 };
@@ -205,7 +205,7 @@ mod tests {
         let pages_id = doc.new_object_id();
 
         let operations = vec![
-            Operation::new("rg", vec![Object::Real(0.0), Object::Real(0.0), Object::Real(0.0)]),
+            Operation::new("rg", vec![Object::Real(0.0_f32), Object::Real(0.0_f32), Object::Real(0.0_f32)]),
             Operation::new("BT", vec![]),
             Operation::new("ET", vec![]),
         ];

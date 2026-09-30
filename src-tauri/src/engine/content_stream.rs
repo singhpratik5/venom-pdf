@@ -5,7 +5,7 @@ use crate::engine::theme::Theme;
 
 fn object_to_f32(obj: &Object) -> Option<f32> {
     match obj {
-        Object::Real(val) => Some(*val as f32),
+        Object::Real(val) => Some(*val),
         Object::Integer(val) => Some(*val as f32),
         _ => None,
     }
@@ -19,9 +19,9 @@ pub fn create_background_rect_operations(
     height: f64,
     theme: &Theme,
 ) -> Vec<Operation> {
-    let r = theme.background[0] as f64 / 255.0;
-    let g = theme.background[1] as f64 / 255.0;
-    let b = theme.background[2] as f64 / 255.0;
+    let r = theme.background[0] as f32 / 255.0;
+    let g = theme.background[1] as f32 / 255.0;
+    let b = theme.background[2] as f32 / 255.0;
 
     vec![
         Operation::new("q", vec![]),
@@ -29,10 +29,10 @@ pub fn create_background_rect_operations(
         Operation::new(
             "re",
             vec![
-                Object::Real(x),
-                Object::Real(y),
-                Object::Real(width),
-                Object::Real(height),
+                Object::Real(x as f32),
+                Object::Real(y as f32),
+                Object::Real(width as f32),
+                Object::Real(height as f32),
             ],
         ),
         Operation::new("f", vec![]),
@@ -55,9 +55,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                 ) {
                     let (mr, mg, mb) = map_color(r, g, b, theme);
                     op.operands = vec![
-                        Object::Real(mr as f64),
-                        Object::Real(mg as f64),
-                        Object::Real(mb as f64),
+                        Object::Real(mr),
+                        Object::Real(mg),
+                        Object::Real(mb),
                     ];
                 }
                 new_ops.push(op);
@@ -72,9 +72,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                 ) {
                     let (mr, mg, mb) = map_color(r, g, b, theme);
                     op.operands = vec![
-                        Object::Real(mr as f64),
-                        Object::Real(mg as f64),
-                        Object::Real(mb as f64),
+                        Object::Real(mr),
+                        Object::Real(mg),
+                        Object::Real(mb),
                     ];
                 }
                 new_ops.push(op);
@@ -86,9 +86,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                     let (mr, mg, mb) = map_gray(gray, theme);
                     op.operator = "rg".to_string();
                     op.operands = vec![
-                        Object::Real(mr as f64),
-                        Object::Real(mg as f64),
-                        Object::Real(mb as f64),
+                        Object::Real(mr),
+                        Object::Real(mg),
+                        Object::Real(mb),
                     ];
                 }
                 new_ops.push(op);
@@ -100,9 +100,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                     let (mr, mg, mb) = map_gray(gray, theme);
                     op.operator = "RG".to_string();
                     op.operands = vec![
-                        Object::Real(mr as f64),
-                        Object::Real(mg as f64),
-                        Object::Real(mb as f64),
+                        Object::Real(mr),
+                        Object::Real(mg),
+                        Object::Real(mb),
                     ];
                 }
                 new_ops.push(op);
@@ -118,10 +118,10 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                 ) {
                     let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
                     op.operands = vec![
-                        Object::Real(mc as f64),
-                        Object::Real(mm as f64),
-                        Object::Real(my as f64),
-                        Object::Real(mk as f64),
+                        Object::Real(mc),
+                        Object::Real(mm),
+                        Object::Real(my),
+                        Object::Real(mk),
                     ];
                 }
                 new_ops.push(op);
@@ -137,10 +137,10 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                 ) {
                     let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
                     op.operands = vec![
-                        Object::Real(mc as f64),
-                        Object::Real(mm as f64),
-                        Object::Real(my as f64),
-                        Object::Real(mk as f64),
+                        Object::Real(mc),
+                        Object::Real(mm),
+                        Object::Real(my),
+                        Object::Real(mk),
                     ];
                 }
                 new_ops.push(op);
@@ -154,9 +154,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                         let (mr, mg, mb) = map_gray(gray, theme);
                         op.operator = "rg".to_string();
                         op.operands = vec![
-                            Object::Real(mr as f64),
-                            Object::Real(mg as f64),
-                            Object::Real(mb as f64),
+                            Object::Real(mr),
+                            Object::Real(mg),
+                            Object::Real(mb),
                         ];
                     }
                 } else if op.operands.len() == 4 {
@@ -169,10 +169,10 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                     ) {
                         let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
                         op.operands = vec![
-                            Object::Real(mc as f64),
-                            Object::Real(mm as f64),
-                            Object::Real(my as f64),
-                            Object::Real(mk as f64),
+                            Object::Real(mc),
+                            Object::Real(mm),
+                            Object::Real(my),
+                            Object::Real(mk),
                         ];
                     }
                 } else if op.operands.len() >= 3 {
@@ -183,9 +183,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                         object_to_f32(&op.operands[2]),
                     ) {
                         let (mr, mg, mb) = map_color(r, g, b, theme);
-                        op.operands[0] = Object::Real(mr as f64);
-                        op.operands[1] = Object::Real(mg as f64);
-                        op.operands[2] = Object::Real(mb as f64);
+                        op.operands[0] = Object::Real(mr);
+                        op.operands[1] = Object::Real(mg);
+                        op.operands[2] = Object::Real(mb);
                     }
                 }
                 new_ops.push(op);
@@ -199,9 +199,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                         let (mr, mg, mb) = map_gray(gray, theme);
                         op.operator = "RG".to_string();
                         op.operands = vec![
-                            Object::Real(mr as f64),
-                            Object::Real(mg as f64),
-                            Object::Real(mb as f64),
+                            Object::Real(mr),
+                            Object::Real(mg),
+                            Object::Real(mb),
                         ];
                     }
                 } else if op.operands.len() == 4 {
@@ -214,10 +214,10 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                     ) {
                         let (mc, mm, my, mk) = map_cmyk(c, m, y, k, theme);
                         op.operands = vec![
-                            Object::Real(mc as f64),
-                            Object::Real(mm as f64),
-                            Object::Real(my as f64),
-                            Object::Real(mk as f64),
+                            Object::Real(mc),
+                            Object::Real(mm),
+                            Object::Real(my),
+                            Object::Real(mk),
                         ];
                     }
                 } else if op.operands.len() >= 3 {
@@ -228,9 +228,9 @@ pub fn process_operations(operations: Vec<Operation>, theme: &Theme) -> Vec<Oper
                         object_to_f32(&op.operands[2]),
                     ) {
                         let (mr, mg, mb) = map_color(r, g, b, theme);
-                        op.operands[0] = Object::Real(mr as f64);
-                        op.operands[1] = Object::Real(mg as f64);
-                        op.operands[2] = Object::Real(mb as f64);
+                        op.operands[0] = Object::Real(mr);
+                        op.operands[1] = Object::Real(mg);
+                        op.operands[2] = Object::Real(mb);
                     }
                 }
                 new_ops.push(op);
@@ -263,13 +263,13 @@ mod tests {
         // Black text: 0 0 0 rg
         let ops = vec![Operation::new(
             "rg",
-            vec![Object::Real(0.0), Object::Real(0.0), Object::Real(0.0)],
+            vec![Object::Real(0.0_f32), Object::Real(0.0_f32), Object::Real(0.0_f32)],
         )];
         let processed = process_operations(ops, &theme);
         assert_eq!(processed.len(), 1);
         assert_eq!(processed[0].operator, "rg");
         if let Object::Real(r) = processed[0].operands[0] {
-            assert!((r - 220.0 / 255.0).abs() < 1e-4);
+            assert!((r - (220.0 / 255.0) as f32).abs() < 1e-4);
         } else {
             panic!("Expected Real operand");
         }
@@ -279,12 +279,12 @@ mod tests {
     fn test_process_grayscale_fill_conversion() {
         let theme = test_theme();
         // Black grayscale: 0 g -> should convert to rg with text color
-        let ops = vec![Operation::new("g", vec![Object::Real(0.0)])];
+        let ops = vec![Operation::new("g", vec![Object::Real(0.0_f32)])];
         let processed = process_operations(ops, &theme);
         assert_eq!(processed.len(), 1);
         assert_eq!(processed[0].operator, "rg");
         if let Object::Real(r) = processed[0].operands[0] {
-            assert!((r - 220.0 / 255.0).abs() < 1e-4);
+            assert!((r - (220.0 / 255.0) as f32).abs() < 1e-4);
         } else {
             panic!("Expected Real operand");
         }
@@ -307,7 +307,7 @@ mod tests {
         let theme = test_theme();
 
         // 1 operand (DeviceGray)
-        let gray_op = vec![Operation::new("sc", vec![Object::Real(0.0)])];
+        let gray_op = vec![Operation::new("sc", vec![Object::Real(0.0_f32)])];
         let res_gray = process_operations(gray_op, &theme);
         assert_eq!(res_gray[0].operator, "rg");
         assert_eq!(res_gray[0].operands.len(), 3);
@@ -316,10 +316,10 @@ mod tests {
         let cmyk_op = vec![Operation::new(
             "SC",
             vec![
-                Object::Real(0.0),
-                Object::Real(0.0),
-                Object::Real(0.0),
-                Object::Real(1.0),
+                Object::Real(0.0_f32),
+                Object::Real(0.0_f32),
+                Object::Real(0.0_f32),
+                Object::Real(1.0_f32),
             ],
         )];
         let res_cmyk = process_operations(cmyk_op, &theme);
@@ -330,9 +330,9 @@ mod tests {
         let rgb_op = vec![Operation::new(
             "scn",
             vec![
-                Object::Real(0.0),
-                Object::Real(0.0),
-                Object::Real(0.0),
+                Object::Real(0.0_f32),
+                Object::Real(0.0_f32),
+                Object::Real(0.0_f32),
             ],
         )];
         let res_rgb = process_operations(rgb_op, &theme);
@@ -345,7 +345,7 @@ mod tests {
         let theme = test_theme();
         let ops = vec![
             Operation::new("BT", vec![]),
-            Operation::new("Tf", vec![Object::Name(b"F1".to_vec()), Object::Real(12.0)]),
+            Operation::new("Tf", vec![Object::Name(b"F1".to_vec()), Object::Real(12.0_f32)]),
             Operation::new("ET", vec![]),
         ];
         let processed = process_operations(ops, &theme);
