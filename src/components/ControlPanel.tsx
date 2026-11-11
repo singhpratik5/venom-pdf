@@ -7,7 +7,7 @@ import ColorPicker from './ColorPicker';
 import BatchQueue from './BatchQueue';
 import clsx from 'clsx';
 import { ImageMode } from '../types';
-import { CheckCircle2, AlertCircle, FileDown, Sparkles } from 'lucide-react';
+import { CheckCircle2, AlertCircle, FileDown, Sparkles, Brain } from 'lucide-react';
 
 const ControlPanel: React.FC = () => {
   const {
@@ -19,6 +19,7 @@ const ControlPanel: React.FC = () => {
     startProcessing,
     stopProcessing,
     pageRange,
+    layoutSummary,
   } = useAppStore();
 
   const { theme, updateCustomTheme } = useTheme();
@@ -98,6 +99,48 @@ const ControlPanel: React.FC = () => {
             <span className="truncate flex-1">{notification.message}</span>
           </div>
         )}
+
+        {/* AI Layout Intelligence Section */}
+        <section className="bg-background-main/80 rounded-xl p-3 border border-background-border space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-purple-400">
+              <Brain size={14} className="text-purple-400" />
+              <span>Document Layout AI</span>
+            </div>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/70 border border-emerald-600/40 text-emerald-300 font-mono">
+              WCAG AAA
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5 pt-1 text-[11px]">
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Headings</span>
+              <span className="font-mono text-cyan-400 font-semibold">{layoutSummary.heading || 0}</span>
+            </div>
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Paragraphs</span>
+              <span className="font-mono text-emerald-400 font-semibold">{layoutSummary.paragraph || 0}</span>
+            </div>
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Tables</span>
+              <span className="font-mono text-amber-400 font-semibold">{layoutSummary.table || 0}</span>
+            </div>
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Formulas</span>
+              <span className="font-mono text-purple-400 font-semibold">{layoutSummary.formula || 0}</span>
+            </div>
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Code</span>
+              <span className="font-mono text-teal-400 font-semibold">{layoutSummary.code_block || 0}</span>
+            </div>
+            <div className="bg-background-sidebar/90 p-1.5 rounded border border-background-border text-center">
+              <span className="text-gray-400 block text-[9px] uppercase">Figures</span>
+              <span className="font-mono text-pink-400 font-semibold">{layoutSummary.figure || 0}</span>
+            </div>
+          </div>
+        </section>
+
+        <hr className="border-background-border" />
 
         {/* Image Handling */}
         <section>

@@ -2,15 +2,17 @@
   <img src="assets/logo.jpg" alt="Venom PDF Logo" width="180" />
 </p>
 
-<h1 align="center">🐍 Venom PDF</h1>
+<h1 align="center">🐍 Venom PDF & Venom-AI</h1>
 
 <p align="center">
-  <b>High-Performance Native PDF Dark Mode Converter — Blazing Fast, 100% Offline, Zero Compromises</b>
+  <b>High-Performance Document Layout Intelligence & Native Conversion Engine — Blazing Fast, 100% Offline, Zero Compromises</b>
 </p>
 
 <p align="center">
   <a href="https://github.com/singhpratik5/venom-pdf/actions"><img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-blue?style=flat-square" alt="Platform" /></a>
   <a href="https://tauri.app"><img src="https://img.shields.io/badge/Built%20with-Tauri%202.0%20+%20Rust-orange?style=flat-square" alt="Tauri 2 + Rust" /></a>
+  <a href="https://onnxruntime.ai"><img src="https://img.shields.io/badge/AI%20Engine-ONNX%20Runtime%20v1.17+-005CED?style=flat-square" alt="ONNX Runtime" /></a>
+  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square" alt="FastAPI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/Status-Feature%20Complete-brightgreen?style=flat-square" alt="Status" />
   <img src="https://img.shields.io/badge/Privacy-100%25%20Offline-brightgreen?style=flat-square" alt="Privacy" />
@@ -22,11 +24,11 @@
 
 ---
 
-## 🎯 What is Venom PDF?
+## 🎯 What is Venom PDF & Venom-AI?
 
-**Venom PDF** is an open-source, native desktop application and headless CLI tool that intelligently inverts PDF documents into elegant dark mode themes — **without destroying vector text quality, searchability, or raster image integrity**.
+**Venom PDF** is an open-source, native desktop application, document intelligence engine, and headless CLI tool that combines low-level vector content stream manipulation with **Machine Learning layout analysis and perceptual contrast optimization**.
 
-Unlike traditional tools that flatten pages into blurry bitmaps or flip entire pages into creepy photonegatives, Venom PDF operates directly on the PDF's low-level vector content streams (`rg`, `g`, `k`, `sc`, `scn`). Your text remains razor-sharp and searchable, diagrams and formulas remain crisp, photos remain untouched, and confidential documents never leave your machine.
+Unlike traditional tools that either flatten pages into bloated raster images or execute blind RGB negation that destroys formulas and diagrams, Venom PDF couples a high-performance **Rust vector engine** with **Venom-AI** — a multimodal layout segmentation model running on **ONNX Runtime** (< 0.15 ms/elem) to classify page regions (headings, paragraphs, tables, formulas, figures, code blocks) and optimize reading contrast.
 
 ---
 
@@ -43,6 +45,14 @@ Unlike traditional tools that flatten pages into blurry bitmaps or flip entire p
 ---
 
 ## ✨ Key Features
+
+### 🤖 Venom-AI Multimodal Document Intelligence
+Integrates a deep neural layout segmentation and region classification pipeline:
+- **22-Dimensional Multimodal Feature Vector:** Combines scale-invariant spatial coordinates, typographic linguistics (Shannon entropy, casing ratios, token densities), and visual surface textures.
+- **Deep Neural Layout Classifier (ONNX):** Lightweight feedforward network with folded standardization, achieving **0.108 ms / element** inference latency on CPU (**538x faster** than scikit-learn).
+- **6 Document Classes:** Accurately distinguishes `paragraph`, `heading`, `table`, `figure`, `formula`, and `code_block`.
+- **WCAG AAA Adaptive Contrast Optimizer:** Perceptual color science module dynamically boosting fine formula strokes and tabular grids to guarantee strict accessibility compliance ($\ge 7.0:1$).
+- **Live GUI Inspection:** One-click toggle in the React preview displays color-coded layout bounding box overlays with confidence scores.
 
 ### 🧠 Smart Vector Inversion Engine
 Operates on PDF operators directly using `lopdf`. When a PDF page lacks an explicit background, Venom PDF automatically computes `MediaBox`/`CropBox` dimensions and injects a dark canvas rectangle under the stream, preventing black text on white canvas rendering.
@@ -143,9 +153,9 @@ Right-click any PDF or folder in Windows 10 & 11:
 ┌────────────────────────────────────────────────────────┐
 │                   React 18 Frontend                    │
 │    Vite • TypeScript • Tailwind CSS • PDF.js Canvas    │
-│       GPU <feColorMatrix> Live Inversion Preview       │
+│    AI Layout Bounding Box & Confidence Overlay Engine  │
 └───────────────────────────▲────────────────────────────┘
-                            │ Tauri IPC (Commands & Events)
+                            │ Tauri IPC / REST API
 ┌───────────────────────────▼────────────────────────────┐
 │                    Rust Core Engine                    │
 │  ┌──────────────────┐ ┌─────────────────────────────┐  │
@@ -156,11 +166,24 @@ Right-click any PDF or folder in Windows 10 & 11:
 │  │  Color Mapping   │ │      OS Integration &       │  │
 │  │ Rec.601 + HSL Hue│ │     Headless CLI Runner     │  │
 │  └──────────────────┘ └─────────────────────────────┘  │
+└───────────────────────────▲────────────────────────────┘
+                            │ Multimodal Features (22 dims)
+┌───────────────────────────▼────────────────────────────┐
+│              Venom-AI Document Intelligence            │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ ONNX Runtime Engine (CPU Microsecond Latency)   │  │
+│  │ Multimodal Region Classifier (6 Classes)         │  │
+│  │ WCAG AAA Perceptual Contrast Optimizer           │  │
+│  │ FastAPI Microservice & Python CLI Suite          │  │
+│  └──────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────┘
 ```
 
 | Component | Technology | Rationale |
 |---|---|---|
+| **AI Inference Engine** | [ONNX Runtime](https://onnxruntime.ai) | 0.108 ms/element CPU latency, zero heavy runtime dependencies |
+| **Model Architectures** | Deep Neural Net + Random Forest | Dual-stage pipeline with folded normalization and interpretable feature ranking |
+| **AI API Microservice** | [FastAPI](https://fastapi.tiangolo.com) + Uvicorn | High-throughput asynchronous REST endpoints with OpenAPI documentation |
 | **Desktop Runtime** | [Tauri 2.0](https://tauri.app) | ~15 MB installer, zero Chromium overhead, native OS performance |
 | **Backend Core** | Rust 2021 | Strict memory safety, microsecond vector operations |
 | **PDF Manipulation** | `lopdf` + `image` | Direct low-level dictionary and stream transformation without rasterization |
@@ -201,7 +224,7 @@ pnpm tauri dev
 
 ## 🧪 Testing & Verification
 
-Venom PDF includes comprehensive test suites across the Rust engine and frontend:
+Venom PDF and Venom-AI include comprehensive test suites across the Rust vector engine, the Python/ONNX ML pipeline, and the frontend:
 
 ```bash
 # Run unit and integration tests in Rust
@@ -213,6 +236,12 @@ pnpm build
 
 # Run engine verification & contrast benchmark
 pnpm verify
+
+# Run Venom-AI multimodal tests
+pytest ml/tests
+
+# Run Venom-AI training, cross-validation & 538x ONNX latency benchmark
+python ml/cli.py benchmark
 ```
 
 ---

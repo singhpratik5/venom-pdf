@@ -45,3 +45,22 @@ export interface BatchProgressPayload {
   status: 'pending' | 'processing' | 'done' | 'error';
   errorMessage?: string;
 }
+
+export type LayoutClass = 'paragraph' | 'heading' | 'table' | 'figure' | 'formula' | 'code_block';
+
+export interface LayoutElement {
+  id: string;
+  bbox: [number, number, number, number];
+  text: string;
+  label: LayoutClass;
+  confidence: number;
+  color: string;
+}
+
+export interface DocumentPerceptionState {
+  aiOverlayEnabled: boolean;
+  detectedElements: LayoutElement[];
+  summary: Record<string, number>;
+  wcagAaaCompliant: boolean;
+  contrastRatio: number;
+}

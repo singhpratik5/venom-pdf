@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PdfFileInfo, VenomTheme, ImageMode, BatchJob } from '../types';
+import { PdfFileInfo, VenomTheme, ImageMode, BatchJob, LayoutElement } from '../types';
 
 export interface AppState {
   files: PdfFileInfo[];
@@ -14,6 +14,9 @@ export interface AppState {
   zoom: number;
   previewMode: 'dark' | 'original';
   isOsModalOpen: boolean;
+  isAiOverlayActive: boolean;
+  layoutElements: LayoutElement[];
+  layoutSummary: Record<string, number>;
 
   addFile: (file: PdfFileInfo) => void;
   addFiles: (files: PdfFileInfo[]) => void;
@@ -34,6 +37,8 @@ export interface AppState {
   setZoom: (zoom: number) => void;
   setPreviewMode: (mode: 'dark' | 'original') => void;
   setIsOsModalOpen: (open: boolean) => void;
+  toggleAiOverlay: () => void;
+  setLayoutElements: (elements: LayoutElement[], summary: Record<string, number>) => void;
 }
 
 const defaultTheme: VenomTheme = {
@@ -58,7 +63,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   zoom: 1.0,
   previewMode: 'dark',
   isOsModalOpen: false,
+  isAiOverlayActive: false,
+  layoutElements: [],
+  layoutSummary: {},
 
+  toggleAiOverlay: () => set((state) => ({ isAiOverlayActive: !state.isAiOverlayActive })),
+  setLayoutElements: (elements, summary) => set({ layoutElements: elements, layoutSummary: summary }),
   setIsOsModalOpen: (open) => set({ isOsModalOpen: open }),
 
   addFile: (file) =>

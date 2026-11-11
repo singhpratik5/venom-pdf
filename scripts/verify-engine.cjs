@@ -55,6 +55,10 @@ const requiredFiles = [
   'src/components/PDFPreview.tsx',
   'src/hooks/useKeyboardShortcuts.ts',
   'src/hooks/useOsIntegration.ts',
+  'ml/models/weights/layout_classifier.onnx',
+  'ml/evaluation/metrics_report.json',
+  'ml/api/server.py',
+  'ml/cli.py',
   'STATUS.md',
   'README.md',
 ];
@@ -70,7 +74,7 @@ for (const file of requiredFiles) {
   }
 }
 if (missing === 0) {
-  console.log('✓ All 17 required deliverables present and verified.\n');
+  console.log(`✓ All ${requiredFiles.length} required deliverables present and verified.\n`);
 }
 
 // 3. Performance & Size Bloat Analysis

@@ -1,0 +1,163 @@
+{
+  "dataset": {
+    "total_samples": 900,
+    "classes": [
+      "paragraph",
+      "heading",
+      "table",
+      "figure",
+      "formula",
+      "code_block"
+    ],
+    "feature_dim": 22
+  },
+  "baseline_model": {
+    "type": "RandomForestClassifier",
+    "cross_val_macro_f1": 1.0,
+    "test_accuracy": 1.0,
+    "test_macro_f1": 1.0,
+    "latency_ms_per_element": 58.2618,
+    "top_features": [
+      {
+        "feature": "typo_punctuation_ratio",
+        "importance": 0.17099336225998685
+      },
+      {
+        "feature": "typo_avg_token_len",
+        "importance": 0.11642454204243277
+      },
+      {
+        "feature": "typo_token_count",
+        "importance": 0.10746022040835475
+      },
+      {
+        "feature": "typo_entropy",
+        "importance": 0.09982224815561631
+      },
+      {
+        "feature": "typo_char_count",
+        "importance": 0.09545189787387418
+      },
+      {
+        "feature": "spatial_norm_height",
+        "importance": 0.08349914643138581
+      },
+      {
+        "feature": "typo_digit_ratio",
+        "importance": 0.07399647688419488
+      },
+      {
+        "feature": "spatial_norm_area",
+        "importance": 0.07032054408933078
+      }
+    ]
+  },
+  "production_neural_model": {
+    "type": "NeuralLayoutNet (ONNX)",
+    "test_accuracy": 1.0,
+    "test_macro_f1": 1.0,
+    "test_weighted_f1": 1.0,
+    "latency_ms_per_element": 0.1083,
+    "confusion_matrix": [
+      [
+        30,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        30,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        30,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        30,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        30,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        30
+      ]
+    ],
+    "per_class_metrics": {
+      "paragraph": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "heading": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "table": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "figure": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "formula": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "code_block": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 30.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 180.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 180.0
+      }
+    }
+  }
+}

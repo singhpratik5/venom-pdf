@@ -38,6 +38,14 @@ npm-debug.log*
 # Testing
 coverage/
 test-results/
+.pytest_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
 
 # Temporary
 *.tmp

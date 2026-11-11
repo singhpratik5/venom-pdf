@@ -16,8 +16,10 @@ import {
   Sparkles,
   Loader2,
   FileCheck,
+  Brain,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { extractDocumentLayout } from '../utils/aiLayoutPerception';
 
 // Set up pdf.js worker using ESM URL import compatible with Vite
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -33,6 +35,10 @@ const PDFPreview: React.FC = () => {
     currentPage,
     zoom,
     previewMode,
+    isAiOverlayActive,
+    layoutElements,
+    toggleAiOverlay,
+    setLayoutElements,
     setCurrentPage,
     setZoom,
     setPreviewMode,
@@ -133,6 +139,21 @@ const PDFPreview: React.FC = () => {
 
         renderTask = page.render(renderContext);
         await renderTask.promise;
+
+        // Perform Document Layout Intelligence extraction
+        try {
+          const textContent = await page.getTextContent();
+          const { elements, summary } = extractDocumentLayout(
+            (textContent.items as any[]) || [],
+            viewport.width,
+            viewport.height
+          );
+          if (!isCancelled) {
+            setLayoutElements(elements, summary);
+          }
+        } catch (e) {
+          console.warn('AI layout extraction fallback:', e);
+        }
       } catch (err: unknown) {
         if (
           err &&
@@ -382,6 +403,21 @@ const PDFPreview: React.FC = () => {
                 <span>Original</span>
               </button>
             </div>
+
+            {/* AI Layout Intelligence Toggle */}
+            <button
+              onClick={toggleAiOverlay}
+              className={clsx(
+                'flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors border',
+                isAiOverlayActive
+                  ? 'bg-purple-900/40 border-purple-500 text-purple-300 font-semibold shadow-[0_0_10px_rgba(168,85,247,0.3)]'
+                  : 'border-background-border text-gray-400 hover:text-white hover:border-gray-600 bg-background-main'
+              )}
+              title="Toggle Neural Layout Region Segmentation"
+            >
+              <Brain size={13} className={isAiOverlayActive ? 'text-purple-400 animate-pulse' : ''} />
+              <span>AI Layout</span>
+            </button>
           </div>
         </div>
       )}
@@ -471,6 +507,43 @@ const PDFPreview: React.FC = () => {
                     transition: 'filter 0.2s ease',
                   }}
                 />
+
+                {/* AI Document Layout Intelligence Bounding Box Overlay */}
+                {isAiOverlayActive && layoutElements.length > 0 && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
+                    {layoutElements.map((el) => {
+                      const canvas = canvasRef.current;
+                      const cw = canvas ? canvas.width : 595;
+                      const ch = canvas ? canvas.height : 842;
+                      const left = (el.bbox[0] / cw) * 100;
+                      const top = (el.bbox[1] / ch) * 100;
+                      const width = ((el.bbox[2] - el.bbox[0]) / cw) * 100;
+                      const height = ((el.bbox[3] - el.bbox[1]) / ch) * 100;
+
+                      return (
+                        <div
+                          key={el.id}
+                          className="absolute border border-dashed rounded-sm transition-all"
+                          style={{
+                            left: `${Math.max(0, left)}%`,
+                            top: `${Math.max(0, top)}%`,
+                            width: `${Math.max(width, 3)}%`,
+                            height: `${Math.max(height, 2)}%`,
+                            borderColor: el.color,
+                            backgroundColor: `${el.color}18`,
+                          }}
+                        >
+                          <span
+                            className="absolute -top-3.5 left-0 text-[9px] px-1 py-0.5 rounded font-mono font-bold uppercase tracking-wider text-black shadow"
+                            style={{ backgroundColor: el.color }}
+                          >
+                            {el.label} {Math.round(el.confidence * 100)}%
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
